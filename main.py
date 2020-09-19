@@ -74,13 +74,16 @@ def simulate(fres):
     #plt.imshow(im_mesh)
     #plt.show()
 
-    for node in range(const.N_NODE_MIN, const.N_NODE_MAX, const.M_NODE_EPO):
+    #ノード数固定
+    node = const.N_NODE
+
+    for wariai in const.N_INTEF_INDEX:
         
         #結果クラス
         results = Results.Results()
 
         #print('process id : ', os.getpid())
-        print('node =',node)
+        print('wariai =',wariai)
 
         for trial in range(const.N_TRIALS):
 
@@ -94,7 +97,7 @@ def simulate(fres):
                 const.VAR, const.COR_DIST)
             
             rem.make_rem(node)
-            rem.make_interference(int(node*const.N_NODE_INTEF))
+            rem.make_interference(int(node*wariai))
 
             '''
             建物抽出
@@ -130,10 +133,10 @@ def simulate(fres):
 
             df_tmp = pd.DataFrame({'rssi':l_rssi})
             rem.redata = pd.concat([rem.redata, df_tmp],axis=1)
-            
+           
             #干渉ノードの受信電力計算            
-            #df_tmp = pd.DataFrame({'intf_rssi':l_intf_rssi})
-            #rem.redata = pd.concat([rem.redata, df_tmp],axis=1)
+            df_tmp = pd.DataFrame({'intf_rssi':l_intf_rssi})
+            rem.redata = pd.concat([rem.redata, df_tmp],axis=1)
 
             '''
             Neural Network
@@ -144,7 +147,10 @@ def simulate(fres):
             ar_x = np.array([build.tx_norm, build.ty_norm, build.rx_norm, build.ry_norm, \
                 build.build_dens_norm])
             ar_x = ar_x.T
-            ar_t = np.array(l_rssi)
+
+            #干渉を考慮したRSSIを正解とする
+            ar_t = np.array(l_intf_rssi)
+            
             ar_x = ar_x.astype('float32')
             ar_t = ar_t.astype('float32')
             #print('ar_x.shape =',ar_x.shape)
@@ -172,7 +178,7 @@ def simulate(fres):
                 #rem.out_map(df_tmp, 'rx', 'ry', 'rssi')
 
                 #rssi補間
-                c = 'rssi'
+                c = 'intf_rssi'
                 l_dist, l_rssi = func.interpolation_sim(df_tmp, c, rx, ry, 3)
     
                 if len(l_dist) > 0:
@@ -182,8 +188,8 @@ def simulate(fres):
 
         #結果の格納
         results.calc_error()
-        fres[const.N_INDEX.index(node)]['eidw'].append(results.rssi_error)
-        fres[const.N_INDEX.index(node)]['enn'].append(results.nnrssi_error)
+        fres[const.N_INTEF_INDEX.index(wariai)]['eidw'].append(results.rssi_error)
+        fres[const.N_INTEF_INDEX.index(wariai)]['enn'].append(results.nnrssi_error)
 
 
 '''main関数
@@ -193,7 +199,7 @@ if __name__ == "__main__":
     with Manager() as manager:
 
         res = [{'eidw':manager.list(), 'enn':manager.list()} \
-            for i in range(const.N_NODE_MIN, const.N_NODE_MAX, const.M_NODE_EPO)]
+            for i in const.N_INTEF_INDEX]
 
         l_process = []
         for i in range(const.N_CPU):
@@ -204,11 +210,11 @@ if __name__ == "__main__":
         for process in l_process:
             process.join()
 
-        for node in range(const.N_NODE_MIN, const.N_NODE_MAX, const.M_NODE_EPO):
+        for wariai in const.N_INTEF_INDEX:
             tmp = {'eidw':[],'enn':[]}
-            tmp['eidw'] = list(itertools.chain.from_iterable(res[const.N_INDEX.index(node)]['eidw'][:]))
-            tmp['enn'] = list(itertools.chain.from_iterable(res[const.N_INDEX.index(node)]['enn'][:]))
+            tmp['eidw'] = list(itertools.chain.from_iterable(res[const.N_INTEF_INDEX.index(wariai)]['eidw'][:]))
+            tmp['enn'] = list(itertools.chain.from_iterable(res[const.N_INTEF_INDEX.index(wariai)]['enn'][:]))
             df = pd.DataFrame(tmp.values(), index=tmp.keys()).T
             
-            name = str(node) + '_error.csv'
+            name = str(wariai) + '_error.csv'
             df.to_csv(name)

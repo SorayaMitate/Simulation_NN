@@ -64,10 +64,10 @@ class Const():
         self.N_EPOCH = 256
 
         #使用コア数
-        self.N_CPU = 9
+        self.N_CPU = 2
 
         #試行回数
-        self.N_TRIALS = 111
+        self.N_TRIALS = 1
 
         #メッシュサイズ
         self.SIZE_MESH = 5
@@ -79,7 +79,7 @@ class Const():
         self.COR_DIST = 50.0
 
         #ノード数
-        #self.N_NODE = 50
+        self.N_NODE = 40
         self.N_NODE_MIN = 20
         self.N_NODE_MAX = 110
         self.M_NODE_EPO = 20
@@ -93,4 +93,9 @@ class Const():
 
         #電波環境を劣悪にさせるノードの割合
         self.N_NODE_INTEF = 0.1
+        self.N_NODE_INTEF_MIN = 1
+        self.N_NODE_INTEF_MAX = 6
+        self.N_NODE_INTEF_EPO = 1
+        self.N_INTEF_INDEX = [i*0.1 for i in range(self.N_NODE_INTEF_MIN, \
+            self.N_NODE_INTEF_MAX, self.N_NODE_INTEF_EPO)]
         self.ATEN_INTEF = 5
