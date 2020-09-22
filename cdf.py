@@ -12,7 +12,6 @@ plt.rcParams["font.size"] = 24
 font = {'family' : 'meiryo'}
 matplotlib.rc('font', **font)
 
-data = pd.read_csv('100_error.csv',index_col=0)
 
 def test(s):
 
@@ -38,25 +37,58 @@ def iroiro(s):
     print('分散: {0:.2f}'.format(variance))
     print('標準偏差: {0:.2f}'.format(stdev))
 
+
+#40ノードの正解データ
+path = 'C:\\Users\\soraya-PC\\code\\Simulation_NN\\results\\'
+s = path + '40' + '_error.csv'
+data = pd.read_csv(s,index_col=0)
 col = data.columns
-
-print('--- proposed ---  ', col[0])
-s0, cdf0 = test(list(data['eidw']))
-iroiro(s0)
-
 print('--- proposed ---  ', col[1])
 s1, cdf1 = test(list(data['enn']))
 iroiro(s1)
+plt.scatter(s1, cdf1, s=10,label='True value')
 
 
-'''散布図
-'''
-plt.scatter(s0, cdf0, s=10,label='RSSIExp. by Only IDW')
-plt.scatter(s1, cdf1, s=10,label='RSSIExp. by Only NN')
 
-#plt.scatter(data['remnum'],data['error'])
-#plt.show()
+l_points = []
+l_name = [0.1, 0.2, 0.3, 0.4, 0.5]
+for n in l_name:
 
+    print('wariai = ',n)
+    
+    s = path + str(n) + '_error.csv'
+
+    data = pd.read_csv(s,index_col=0)
+    col = data.columns
+
+    #print('--- proposed ---  ', col[0])
+    #s0, cdf0 = test(list(data['eidw']))
+    #iroiro(s0)
+
+    print('--- proposed ---  ', col[1])
+    s1, cdf1 = test(list(data['enn']))
+    iroiro(s1)
+
+    l_points.append(s1)
+
+    '''散布図
+    '''
+    #plt.scatter(s0, cdf0, s=10,label='RSSIExp. by Only IDW')
+    #plt.scatter(s1, cdf1, s=10,label='RSSIExp. by Only NN')
+    plt.scatter(s1, cdf1, s=10,label=str(n))
+
+plt.legend(loc='upper left',fontsize=20)
+plt.grid()
+plt.xlabel('Expected Error [dB]',fontname="HGGothicM",fontsize=30)
+plt.ylabel('CDF',fontname="HGGothicM",fontsize=30)
+plt.show()
+
+points = tuple(l_points)
+name = tuple(l_name)
+
+fig, ax = plt.subplots()
+bp = ax.boxplot(points)
+ax.set_xticklabels(name)
 plt.legend(loc='upper left',fontsize=20)
 plt.grid()
 plt.xlabel('Expected Error [dB]',fontname="HGGothicM",fontsize=30)

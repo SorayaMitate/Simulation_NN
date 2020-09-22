@@ -126,7 +126,7 @@ def simulate(fres):
 
                 #干渉ノードの受信電力計算
                 if pr in rem.intf_mesh:
-                    intf_rssi = rssi - const.ATEN_INTEF
+                    intf_rssi = rssi + random.randint(-20,20)
                 else:
                     intf_rssi = rssi
                 l_intf_rssi.append(intf_rssi)
