@@ -51,7 +51,7 @@ plt.scatter(s1, cdf1, s=10,label='True value')
 
 
 l_points = []
-l_name = [0.1, 0.2, 0.3, 0.4, 0.5]
+l_name = [0.1, 0.2, 0.3]
 for n in l_name:
 
     print('wariai = ',n)
