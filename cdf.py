@@ -39,7 +39,8 @@ def iroiro(s):
 
 
 #40ノードの正解データ
-path = 'C:\\Users\\soraya-PC\\code\\Simulation_NN\\results\\'
+path = 'C:\\Users\\soraya-PC\\code\\Simulation_NN\\'
+'''
 s = path + '40' + '_error.csv'
 data = pd.read_csv(s,index_col=0)
 col = data.columns
@@ -47,11 +48,11 @@ print('--- proposed ---  ', col[1])
 s1, cdf1 = test(list(data['enn']))
 iroiro(s1)
 plt.scatter(s1, cdf1, s=10,label='True value')
-
+'''
 
 
 l_points = []
-l_name = [0.2, 0.4, 0.6]
+l_name = [0.1, 0.2, 0.3]
 for n in l_name:
 
     print('wariai = ',n)

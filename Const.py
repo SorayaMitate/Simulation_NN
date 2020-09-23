@@ -93,9 +93,9 @@ class Const():
 
         #電波環境を劣悪にさせるノードの割合
         self.N_NODE_INTEF = 0.1
-        self.N_NODE_INTEF_MIN = 2
-        self.N_NODE_INTEF_MAX = 7
-        self.N_NODE_INTEF_EPO = 2
+        self.N_NODE_INTEF_MIN = 1
+        self.N_NODE_INTEF_MAX = 4
+        self.N_NODE_INTEF_EPO = 1
         self.N_INTEF_INDEX = [i*0.1 for i in range(self.N_NODE_INTEF_MIN, \
             self.N_NODE_INTEF_MAX, self.N_NODE_INTEF_EPO)]
         self.ATEN_INTEF = 5

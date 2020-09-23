@@ -97,7 +97,6 @@ def simulate(fres):
                 const.VAR, const.COR_DIST)
             
             rem.make_rem(node)
-            rem.make_interference(int(node*wariai))
 
             '''
             建物抽出
@@ -105,7 +104,6 @@ def simulate(fres):
             #mapクラスの定義
             build = Buildings.Buildings()
             l_rssi = []
-            l_intf_rssi = []
             for index, row in rem.redata.iterrows(): 
 
                 #正解データの画素座標変換
@@ -124,20 +122,15 @@ def simulate(fres):
                     - build_num * const.ATEN_BUILD
                 l_rssi.append(rssi)
 
-                #干渉ノードの受信電力計算
-                if pr in rem.intf_mesh:
-                    intf_rssi = rssi + random.randint(-20,20)
-                else:
-                    intf_rssi = rssi
-                l_intf_rssi.append(intf_rssi)
+            #noiseデータの作成
+            l_rssi_index = [i for i in range(len(l_rssi))]
+            l_noisy_index = random.sample(l_rssi_index, int(len(l_rssi) * wariai))
+            for i in l_noisy_index:
+                l_rssi[i] = l_rssi[i] + random.randint(-20,20)
 
             df_tmp = pd.DataFrame({'rssi':l_rssi})
             rem.redata = pd.concat([rem.redata, df_tmp],axis=1)
            
-            #干渉ノードの受信電力計算            
-            df_tmp = pd.DataFrame({'intf_rssi':l_intf_rssi})
-            rem.redata = pd.concat([rem.redata, df_tmp],axis=1)
-
             '''
             Neural Network
             '''
@@ -149,7 +142,7 @@ def simulate(fres):
             ar_x = ar_x.T
 
             #干渉を考慮したRSSIを正解とする
-            ar_t = np.array(l_intf_rssi)
+            ar_t = np.array(l_rssi)
             
             ar_x = ar_x.astype('float32')
             ar_t = ar_t.astype('float32')
@@ -178,7 +171,7 @@ def simulate(fres):
                 #rem.out_map(df_tmp, 'rx', 'ry', 'rssi')
 
                 #rssi補間
-                c = 'intf_rssi'
+                c = 'rssi'
                 l_dist, l_rssi = func.interpolation_sim(df_tmp, c, rx, ry, 3)
     
                 if len(l_dist) > 0:
