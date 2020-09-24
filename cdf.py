@@ -44,9 +44,11 @@ s = path + '40' + '_error.csv'
 data = pd.read_csv(s,index_col=0)
 col = data.columns
 print('--- proposed ---  ', col[1])
-s1, cdf1 = test(list(data['enn']))
+s40, cdf40 = test(list(data['enn']))
+'''
 iroiro(s1)
 plt.scatter(s1, cdf1, s=10,label='True value')
+'''
 
 
 l_points = []
@@ -74,8 +76,11 @@ for n in l_name:
     '''
     #plt.scatter(s0, cdf0, s=10,label='RSSIExp. by Only IDW')
     #plt.scatter(s1, cdf1, s=10,label='RSSIExp. by Only NN')
-    plt.scatter(s1, cdf1, s=10,label=str(n))
+    #plt.scatter(s1, cdf1, s=10,label=str(n))
 
+
+l_name.append('no interfered')
+l_points.append(s40)
 
 for i in range(len(l_points)):
     if i == 0:
