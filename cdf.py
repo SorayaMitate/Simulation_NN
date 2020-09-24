@@ -49,7 +49,6 @@ iroiro(s1)
 plt.scatter(s1, cdf1, s=10,label='True value')
 
 
-
 l_points = []
 l_name = [0.2, 0.4, 0.6]
 for n in l_name:
@@ -77,20 +76,50 @@ for n in l_name:
     #plt.scatter(s1, cdf1, s=10,label='RSSIExp. by Only NN')
     plt.scatter(s1, cdf1, s=10,label=str(n))
 
-plt.legend(loc='upper left',fontsize=20)
-plt.grid()
-plt.xlabel('Expected Error [dB]',fontname="HGGothicM",fontsize=30)
-plt.ylabel('CDF',fontname="HGGothicM",fontsize=30)
-plt.show()
 
-points = tuple(l_points)
-name = tuple(l_name)
+for i in range(len(l_points)):
+    if i == 0:
+        leng = len(l_points[i])
+    elif leng > len(l_points[i]):
+        leng = len(l_points[i])
+        
+for i in range(len(l_points)):
+    if leng > len(l_points[i]):
+        l_points[i] = np.array(l_points[i])
+        np.append(l_points[i], np.array([np.nan]*(leng-len(l_points[i]))))
+    else:
+        pass
+
+for i in range(len(l_points)):
+    if i == 0:
+        df = pd.DataFrame({
+            'node': l_name[i],
+            'point': l_points[i]
+        })
+    else:
+        tmp_df = pd.DataFrame({
+            'node': l_name[i],
+            'point': l_points[i]
+        })
+        df = pd.concat([df, tmp_df])
+
+print(df['point'].value_counts())
 
 fig, ax = plt.subplots()
+
+ax = sns.boxplot(x='node', y='point', order=l_name, data=df)
+
+'''
+points = tuple(l_points)
+name = tuple(l_name)
 bp = ax.boxplot(points)
+fig.show()
 ax.set_xticklabels(name)
-plt.legend(loc='upper left',fontsize=20)
-plt.grid()
-plt.xlabel('Expected Error [dB]',fontname="HGGothicM",fontsize=30)
-plt.ylabel('CDF',fontname="HGGothicM",fontsize=30)
+'''
+ax.set_xlabel('Percentage of interfered nodes',fontsize=30)
+ax.set_ylabel('Expecterd Error[dB]',fontsize=30)
+#plt.legend(loc='upper left',fontsize=20)
+ax.grid()
+#plt.xlabel('Expected Error [dB]',fontname="HGGothicM",fontsize=30)
+#plt.ylabel('CDF',fontname="HGGothicM",fontsize=30)
 plt.show()
