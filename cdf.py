@@ -121,7 +121,7 @@ bp = ax.boxplot(points)
 fig.show()
 ax.set_xticklabels(name)
 '''
-ax.set_xlabel('The number of nodes',fontsize=30)
+ax.set_xlabel('Percentage of noisy data',fontsize=30)
 ax.set_ylabel('Expecterd Error[dB]',fontsize=30)
 #plt.legend(loc='upper left',fontsize=20)
 ax.grid()
