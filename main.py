@@ -125,7 +125,7 @@ def simulate(fres):
                 l_rssi.append(rssi)
 
                 #干渉ノードの受信電力計算
-                if pr in rem.intf_mesh:
+                if pr in rem.intf_p:
                     intf_rssi = rssi + random.randint(-20,20)
                 else:
                     intf_rssi = rssi
@@ -144,6 +144,9 @@ def simulate(fres):
             build.Normalization()
             #ar_x = np.array([build.tx_norm, build.ty_norm, build.rx_norm, build.ry_norm, \
             #    build.build_dens_norm, build.buidl_rdist_norm, build.build_tdist_norm])
+
+            #入力を削減 ver1.2
+            #ar_x = np.array([build.tx_norm, build.ty_norm, build.build_dens_norm])
             ar_x = np.array([build.tx_norm, build.ty_norm, build.rx_norm, build.ry_norm, \
                 build.build_dens_norm])
             ar_x = ar_x.T
