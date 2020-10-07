@@ -45,10 +45,8 @@ data = pd.read_csv(s,index_col=0)
 col = data.columns
 print('--- proposed ---  ', col[1])
 s40, cdf40 = test(list(data['enn']))
-'''
-iroiro(s1)
-plt.scatter(s1, cdf1, s=10,label='True value')
-'''
+#iroiro(s1)
+#plt.scatter(s1, cdf1, s=10,label='True value')
 
 
 l_points = []
