@@ -12,7 +12,6 @@ plt.rcParams["font.size"] = 24
 font = {'family' : 'meiryo'}
 matplotlib.rc('font', **font)
 
-data = pd.read_csv('100_error.csv',index_col=0)
 
 def test(s):
 
@@ -38,27 +37,84 @@ def iroiro(s):
     print('分散: {0:.2f}'.format(variance))
     print('標準偏差: {0:.2f}'.format(stdev))
 
-col = data.columns
 
-print('--- proposed ---  ', col[0])
-s0, cdf0 = test(list(data['eidw']))
-iroiro(s0)
-
-print('--- proposed ---  ', col[1])
-s1, cdf1 = test(list(data['enn']))
-iroiro(s1)
-
-
-'''散布図
+#40ノードの正解データ
 '''
-plt.scatter(s0, cdf0, s=10,label='RSSIExp. by Only IDW')
-plt.scatter(s1, cdf1, s=10,label='RSSIExp. by Only NN')
+path = 'C:\\Users\\soraya-PC\\code\\Simulation_NN\\results\\'
+s = path + '40' + '_error.csv'
+data = pd.read_csv(s,index_col=0)
+col = data.columns
+print('--- proposed ---  ', col[1])
+s40, cdf40 = test(list(data['enn']))
+#iroiro(s1)
+#plt.scatter(s1, cdf1, s=10,label='True value')
+'''
+s = '30_error.csv'
+data = pd.read_csv(s,index_col=0)
+col = data.columns
+print('--- proposed ---  ', data)
 
-#plt.scatter(data['remnum'],data['error'])
-#plt.show()
+l_points = []
+l_name = []
+for c in col:
 
-plt.legend(loc='upper left',fontsize=20)
-plt.grid()
-plt.xlabel('Expected Error [dB]',fontname="HGGothicM",fontsize=30)
-plt.ylabel('CDF',fontname="HGGothicM",fontsize=30)
+
+    print('--- proposed ---  ', c)
+    s1, cdf1 = test(list(data[c]))
+    iroiro(s1)
+
+    l_points.append(s1)
+    l_name.append(c)
+
+    '''散布図
+    '''
+    #plt.scatter(s0, cdf0, s=10,label='RSSIExp. by Only IDW')
+    #plt.scatter(s1, cdf1, s=10,label='RSSIExp. by Only NN')
+    #plt.scatter(s1, cdf1, s=10,label=str(n))
+
+
+for i in range(len(l_points)):
+    if i == 0:
+        leng = len(l_points[i])
+    elif leng > len(l_points[i]):
+        leng = len(l_points[i])
+        
+for i in range(len(l_points)):
+    if leng > len(l_points[i]):
+        l_points[i] = np.array(l_points[i])
+        np.append(l_points[i], np.array([np.nan]*(leng-len(l_points[i]))))
+    else:
+        pass
+
+for i in range(len(l_points)):
+    if i == 0:
+        df = pd.DataFrame({
+            'node': l_name[i],
+            'point': l_points[i]
+        })
+    else:
+        tmp_df = pd.DataFrame({
+            'node': l_name[i],
+            'point': l_points[i]
+        })
+        df = pd.concat([df, tmp_df])
+
+
+fig, ax = plt.subplots()
+
+ax = sns.boxplot(x='node', y='point', order=l_name, data=df)
+
+'''
+points = tuple(l_points)
+name = tuple(l_name)
+bp = ax.boxplot(points)
+fig.show()
+ax.set_xticklabels(name)
+'''
+ax.set_xlabel('Percentage of interfered nodes',fontsize=30)
+ax.set_ylabel('Expecterd Error[dB]',fontsize=30)
+#plt.legend(loc='upper left',fontsize=20)
+ax.grid()
+#plt.xlabel('Expected Error [dB]',fontname="HGGothicM",fontsize=30)
+#plt.ylabel('CDF',fontname="HGGothicM",fontsize=30)
 plt.show()
