@@ -10,11 +10,12 @@ from chainer import Sequential
 '''
 class NeuralNet():
     
-    def __init__(self, idim, hdim, odim):
+    def __init__(self, idim, hdim, odim, pid):
         
         self.n_input = idim    #入力層の次元数
         self.n_hidden = hdim   #隠れ層の数
         self.n_output = odim   #出力層の次元
+        self.pid = pid
 
         #chainer.print_runtime_info()
 
@@ -130,7 +131,7 @@ class NeuralNet():
             results_valid['loss'].append(loss_val.array)
 
         #ネットワークの保存
-        chainer.serializers.save_npz('sample.net', self.net)
+        chainer.serializers.save_npz(str(self.pid)+'sample.net', self.net)
 
 
     '''訓練済みのネットワークを用いた推論を行う関数
@@ -145,7 +146,7 @@ class NeuralNet():
             L.Linear(self.n_hidden, self.n_hidden), F.relu,
             L.Linear(self.n_hidden, self.n_output)
         )
-        chainer.serializers.load_npz('sample.net', loaded_net)
+        chainer.serializers.load_npz(str(self.pid)+'sample.net', loaded_net)
         with chainer.using_config('train', False), chainer.using_config('enable_backprop', False):
             y_test = loaded_net(self.x_test)
 

@@ -34,8 +34,10 @@ const = Const.Const()
 
 def simulate(fres):
 
+    pid = os.getpid()
+
     #ランダムシードをプロセスIDで初期化
-    random.seed(os.getpid())
+    random.seed(pid)
 
     '''
     画像から建物を抽出する処理
