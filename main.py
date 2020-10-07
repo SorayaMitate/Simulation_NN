@@ -12,6 +12,7 @@ import copy
 import chainer
 import random
 import itertools
+from sklearn.model_selection import train_test_split
 
 import Const
 import Buildings
@@ -19,7 +20,7 @@ import func
 import NeuralNet
 import REM
 import Results
-
+import Kernel
 
 #matplotの設定
 plt.style.use('ggplot') 
@@ -94,7 +95,6 @@ def simulate(fres):
                 const.VAR, const.COR_DIST)
             
             rem.make_rem(node)
-            rem.make_interference(int(node*const.N_NODE_INTEF))
 
             '''
             建物抽出
@@ -121,19 +121,9 @@ def simulate(fres):
                     - build_num * const.ATEN_BUILD
                 l_rssi.append(rssi)
 
-                #干渉ノードの受信電力計算
-                if pr in rem.intf_mesh:
-                    intf_rssi = rssi - const.ATEN_INTEF
-                else:
-                    intf_rssi = rssi
-                l_intf_rssi.append(intf_rssi)
-
             df_tmp = pd.DataFrame({'rssi':l_rssi})
             rem.redata = pd.concat([rem.redata, df_tmp],axis=1)
             
-            #干渉ノードの受信電力計算            
-            #df_tmp = pd.DataFrame({'intf_rssi':l_intf_rssi})
-            #rem.redata = pd.concat([rem.redata, df_tmp],axis=1)
 
             '''
             Neural Network
@@ -147,24 +137,38 @@ def simulate(fres):
             ar_t = np.array(l_rssi)
             ar_x = ar_x.astype('float32')
             ar_t = ar_t.astype('float32')
-            #print('ar_x.shape =',ar_x.shape)
-            #print('ar_t.shape =',ar_t.shape)
-            #print('ar_x =',ar_x)
-            nn = NeuralNet.NeuralNet(const.N_INPUT, const.N_HIDDEN, const.N_OUTPUT)
 
-            nn.prepare(ar_x, ar_t)
+            indices = np.arange(len(ar_t)) #インデックスリスト
+            #データ全体を訓練データとテストデータセットに分割
+            x_train_val, x_test, t_train_val, t_test, train_indices, test_indices \
+                = train_test_split(ar_x, ar_t, indices, test_size=0.3)
+
+            print('ar_t.shape =', ar_t.shape)
+            print('train_indices.shape =', train_indices.shape)
+            print('test_indices.shape =', test_indices.shape)
+
+            nn = NeuralNet.NeuralNet(const.N_INPUT, const.N_HIDDEN, const.N_OUTPUT)
+            nn.prepare(x_train_val, x_test, t_train_val, t_test, train_indices, test_indices)
             nn.train(const.N_ITERATION, const.N_EPOCH)
 
             #NNを用いたRSSIの推定
-            ar_nnerssi = nn.inference(ar_x)
+            ar_nnerssi = nn.inference()
+            print('ar_nnerssi =', ar_nnerssi.shape)
+
+            #カーネル回帰
+            kernel = Kernel.Kernel(x_train_val, x_test, t_train_val, t_test, train_indices, test_indices)
+            kernel.modeling()
+            kernel.prediction()
+            print('kernel.ar_y =',kernel.ar_y.shape)
+
 
             #idwを用いた内挿
-            for i in nn.test_indices:
+            for i in range(len(test_indices)):
 
-                tx = rem.redata.at[i,'tx']
-                ty = rem.redata.at[i,'ty']
-                rx = rem.redata.at[i,'rx']
-                ry = rem.redata.at[i,'ry']
+                tx = rem.redata.at[test_indices[i],'tx']
+                ty = rem.redata.at[test_indices[i],'ty']
+                rx = rem.redata.at[test_indices[i],'rx']
+                ry = rem.redata.at[test_indices[i],'ry']
                 #ran = func.calc_range_sim(3, rx, ry)
                 
                 df_tmp = rem.redata[(rem.redata['tx']==tx)&(rem.redata['ty']==ty)]
@@ -176,7 +180,7 @@ def simulate(fres):
                 l_dist, l_rssi = func.interpolation_sim(df_tmp, c, rx, ry, 3)
     
                 if len(l_dist) > 0:
-                    results.rappend(ar_t[i], func.idw(l_rssi, l_dist), ar_nnerssi[i])
+                    results.rappend(ar_t[i], func.idw(l_rssi, l_dist), ar_nnerssi[i], kernel.ar_y[i])
                 else:
                     pass
 
@@ -184,6 +188,7 @@ def simulate(fres):
         results.calc_error()
         fres[const.N_INDEX.index(node)]['eidw'].append(results.rssi_error)
         fres[const.N_INDEX.index(node)]['enn'].append(results.nnrssi_error)
+        fres[const.N_INDEX.index(node)]['kernel'].append(results.krssi_error)
 
 
 '''main関数
@@ -192,7 +197,7 @@ from multiprocessing import Manager, Value, Process
 if __name__ == "__main__":
     with Manager() as manager:
 
-        res = [{'eidw':manager.list(), 'enn':manager.list()} \
+        res = [{'eidw':manager.list(), 'enn':manager.list(), 'kernel':manager.list()} \
             for i in range(const.N_NODE_MIN, const.N_NODE_MAX, const.M_NODE_EPO)]
 
         l_process = []
@@ -205,9 +210,10 @@ if __name__ == "__main__":
             process.join()
 
         for node in range(const.N_NODE_MIN, const.N_NODE_MAX, const.M_NODE_EPO):
-            tmp = {'eidw':[],'enn':[]}
+            tmp = {'eidw':[],'enn':[], 'kernel':[]}
             tmp['eidw'] = list(itertools.chain.from_iterable(res[const.N_INDEX.index(node)]['eidw'][:]))
             tmp['enn'] = list(itertools.chain.from_iterable(res[const.N_INDEX.index(node)]['enn'][:]))
+            tmp['kernel'] = list(itertools.chain.from_iterable(res[const.N_INDEX.index(node)]['kernel'][:]))
             df = pd.DataFrame(tmp.values(), index=tmp.keys()).T
             
             name = str(node) + '_error.csv'

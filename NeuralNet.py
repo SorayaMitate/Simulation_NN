@@ -24,15 +24,15 @@ class NeuralNet():
         x: 入力データ
         t: 正解データ
     '''
-    def prepare(self, x, t):
+    def prepare(self, x_train_val, x_test, t_train_val, t_test, train_indices, test_indices):
         
-        x = x.astype('float32')
-        t = t.astype('float32')
-        indices = np.arange(len(t)) #インデックスリスト
+        self.x_train_val = x_train_val
+        self.x_test = x_test
+        self.t_train_val = t_train_val
+        self.t_test = t_test
+        self.train_indices = train_indices
+        self.test_indices = test_indices
 
-        #データ全体を訓練データ&検証データセットとテストデータセットに分割
-        self.x_train_val, self.x_test, self.t_train_val, self.t_test, self.train_indices, self.test_indices \
-            = train_test_split(x, t, indices, test_size=0.3)
         #訓練データと検証データセットに分割
         self.x_train, self.x_val, self.t_train, self.t_val = train_test_split(self.x_train_val, self.t_train_val, test_size=0.3)
 
@@ -139,7 +139,7 @@ class NeuralNet():
     出力: 
         y_test: 予測されたデータ
     '''
-    def inference(self, input_data):
+    def inference(self):
         loaded_net = Sequential(
             L.Linear(self.n_input, self.n_hidden), F.relu,
             L.Linear(self.n_hidden, self.n_hidden), F.relu,
@@ -147,7 +147,7 @@ class NeuralNet():
         )
         chainer.serializers.load_npz('sample.net', loaded_net)
         with chainer.using_config('train', False), chainer.using_config('enable_backprop', False):
-            y_test = loaded_net(input_data)
+            y_test = loaded_net(self.x_test)
 
         #self.t_test.data.dtype = np.float32
         y_test = y_test[:].array
