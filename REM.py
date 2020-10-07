@@ -177,7 +177,7 @@ class REM():
         #共分散行列の計算
         for i in range(leng):
             for j in range(leng):
-                tmp = func.calc_dist(X[i],Y[i],X[j],Y[j])
+                tmp = func.calc_dist2(X[i],Y[i],X[j],Y[j])
                 S[i][j] = calc_SpatialCorrelation(tmp, dcol)*(var**2)
         
         #コレスキー分解
@@ -215,7 +215,7 @@ class REM():
         XXYY = [j for i in range(n) for j in XY]
         XYXY = [i for i in XY for j in range(n)]
         SS = [i for i in S for j in range(n)]
-        DIST = [func.calc_dist(XXYY[i][0],XXYY[i][1],XYXY[i][0],XYXY[i][1]) \
+        DIST = [func.calc_dist2(XXYY[i][0],XXYY[i][1],XYXY[i][0],XYXY[i][1]) \
             for i in range(len(XXYY))]
 
         self.redata = pd.DataFrame({

@@ -288,5 +288,5 @@ def PL(f,dis):
         loss = -20.0*np.log10(lam/pii) + gamma*10*np.log10(dis)
         return loss
 
-def calc_dist(x1, y1, x2, y2):
+def calc_dist2(x1, y1, x2, y2):
     return np.sqrt(((x2-x1)*5)**2 + ((y2-y1)*5)**2)
