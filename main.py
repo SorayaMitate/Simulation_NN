@@ -149,7 +149,7 @@ def simulate(fres):
             #print('train_indices.shape =', train_indices.shape)
             #print('test_indices.shape =', test_indices.shape)
 
-            nn = NeuralNet.NeuralNet(const.N_INPUT, const.N_HIDDEN, const.N_OUTPUT)
+            nn = NeuralNet.NeuralNet(const.N_INPUT, const.N_HIDDEN, const.N_OUTPUT, pid)
             nn.prepare(x_train_val, x_test, t_train_val, t_test, train_indices, test_indices)
             nn.train(const.N_ITERATION, const.N_EPOCH)
 
