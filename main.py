@@ -143,9 +143,9 @@ def simulate(fres):
             x_train_val, x_test, t_train_val, t_test, train_indices, test_indices \
                 = train_test_split(ar_x, ar_t, indices, test_size=0.3)
 
-            print('ar_t.shape =', ar_t.shape)
-            print('train_indices.shape =', train_indices.shape)
-            print('test_indices.shape =', test_indices.shape)
+            #print('ar_t.shape =', ar_t.shape)
+            #print('train_indices.shape =', train_indices.shape)
+            #print('test_indices.shape =', test_indices.shape)
 
             nn = NeuralNet.NeuralNet(const.N_INPUT, const.N_HIDDEN, const.N_OUTPUT)
             nn.prepare(x_train_val, x_test, t_train_val, t_test, train_indices, test_indices)
@@ -153,13 +153,13 @@ def simulate(fres):
 
             #NNを用いたRSSIの推定
             ar_nnerssi = nn.inference()
-            print('ar_nnerssi =', ar_nnerssi.shape)
+            #print('ar_nnerssi =', ar_nnerssi.shape)
 
             #カーネル回帰
             kernel = Kernel.Kernel(x_train_val, x_test, t_train_val, t_test, train_indices, test_indices)
             kernel.modeling()
             kernel.prediction()
-            print('kernel.ar_y =',kernel.ar_y.shape)
+            #print('kernel.ar_y =',kernel.ar_y.shape)
 
 
             #idwを用いた内挿
