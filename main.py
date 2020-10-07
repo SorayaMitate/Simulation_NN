@@ -180,7 +180,7 @@ def simulate(fres):
                 l_dist, l_rssi = func.interpolation_sim(df_tmp, c, rx, ry, 3)
     
                 if len(l_dist) > 0:
-                    results.rappend(ar_t[i], func.idw(l_rssi, l_dist), ar_nnerssi[i], kernel.ar_y[i])
+                    results.rappend(ar_t[test_indices[i]], func.idw(l_rssi, l_dist), ar_nnerssi[i], kernel.ar_y[i])
                 else:
                     pass
 
