@@ -67,7 +67,7 @@ class Const():
         self.N_CPU = 9
 
         #試行回数
-        self.N_TRIALS = 111
+        self.N_TRIALS = 11
 
         #メッシュサイズ
         self.SIZE_MESH = 5
@@ -81,7 +81,7 @@ class Const():
         #ノード数
         #self.N_NODE = 50
         self.N_NODE_MIN = 20
-        self.N_NODE_MAX = 50
+        self.N_NODE_MAX = 30
         self.M_NODE_EPO = 10
         self.N_INDEX = [i for i in range(self.N_NODE_MIN, self.N_NODE_MAX, self.M_NODE_EPO)]
 
