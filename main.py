@@ -123,6 +123,12 @@ def simulate(fres):
                     - build_num * const.ATEN_BUILD
                 l_rssi.append(rssi)
 
+            #noiseデータの作成
+            l_rssi_index = [i for i in range(len(l_rssi))]
+            l_noisy_index = random.sample(l_rssi_index, int(len(l_rssi) * 0.2))
+            for i in l_noisy_index:
+                l_rssi[i] = l_rssi[i] + random.randint(-10,10)
+
             df_tmp = pd.DataFrame({'rssi':l_rssi})
             rem.redata = pd.concat([rem.redata, df_tmp],axis=1)
             
