@@ -49,7 +49,7 @@ s40, cdf40 = test(list(data['enn']))
 #iroiro(s1)
 #plt.scatter(s1, cdf1, s=10,label='True value')
 '''
-s = '30_error.csv'
+s = '20_error.csv'
 data = pd.read_csv(s,index_col=0)
 col = data.columns
 print('--- proposed ---  ', data)
