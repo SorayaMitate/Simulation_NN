@@ -67,7 +67,7 @@ class Const():
         self.N_CPU = 9
 
         #試行回数
-        self.N_TRIALS = 11
+        self.N_TRIALS = 2
 
         #メッシュサイズ
         self.SIZE_MESH = 5
