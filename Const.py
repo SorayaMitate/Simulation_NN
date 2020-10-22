@@ -64,10 +64,10 @@ class Const():
         self.N_EPOCH = 256
 
         #使用コア数
-        self.N_CPU = 1
+        self.N_CPU = 9
 
         #試行回数
-        self.N_TRIALS = 1
+        self.N_TRIALS = 111
 
         #メッシュサイズ
         self.SIZE_MESH = 5
