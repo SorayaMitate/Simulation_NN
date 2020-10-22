@@ -54,7 +54,7 @@ class Const():
         Neural Net に関する設定項目
         '''
         #各層の数
-        self.N_INPUT = 5
+        self.N_INPUT = 2
         self.N_HIDDEN = 100
         self.N_OUTPUT = 1
 
@@ -64,10 +64,10 @@ class Const():
         self.N_EPOCH = 256
 
         #使用コア数
-        self.N_CPU = 9
+        self.N_CPU = 1
 
         #試行回数
-        self.N_TRIALS = 50
+        self.N_TRIALS = 1
 
         #メッシュサイズ
         self.SIZE_MESH = 5
@@ -81,7 +81,7 @@ class Const():
         #ノード数
         #self.N_NODE = 50
         self.N_NODE_MIN = 20
-        self.N_NODE_MAX = 30
+        self.N_NODE_MAX = 60
         self.M_NODE_EPO = 10
         self.N_INDEX = [i for i in range(self.N_NODE_MIN, self.N_NODE_MAX, self.M_NODE_EPO)]
 
@@ -89,7 +89,7 @@ class Const():
         self.FREQ = 920000000
 
         #建物による減衰
-        self.ATEN_BUILD = 3
+        self.ATEN_BUILD = 5
 
         #電波環境を劣悪にさせるノードの割合
         self.N_NODE_INTEF = 0.1

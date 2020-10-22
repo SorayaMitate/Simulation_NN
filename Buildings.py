@@ -13,6 +13,7 @@ class Buildings():
         self.build_tdist = [] #送信機からの最初の建物までの距離
         self.buidl_rdist = [] #受信機からの最初の建物までの距離
         self.build_gasonum = []
+        self.dist = []
         #self.rssi = []
 
     '''マップクラスに要素を追加する関数
@@ -22,7 +23,7 @@ class Buildings():
         tdist : 送信機からの最初の建物までの距離
         rdist : 受信機からの最初の建物までの距離
     '''
-    def bappend(self, pt, pr, dens, tdist, rdist):
+    def bappend(self, pt, pr, dens, tdist, rdist, dist):
         self.pt.append(pt)
         self.tx.append(pt[0])
         self.ty.append(pt[1])
@@ -31,6 +32,7 @@ class Buildings():
         self.build_dens.append(dens)
         self.build_tdist.append(tdist)
         self.buidl_rdist.append(rdist)
+        self.dist.append(dist)
         #self.build_gasonum.append(gasonum)
         #self.rssi.append(rssi)
 
@@ -50,5 +52,6 @@ class Buildings():
         self.build_dens_norm = min_max(self.build_dens)
         self.build_tdist_norm = min_max(self.build_tdist)
         self.buidl_rdist_norm = min_max(self.buidl_rdist)
+        self.dist_norm = min_max(self.dist)
         #self.build_gasonum = min_max(self.build_gasonum)
         

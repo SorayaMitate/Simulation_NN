@@ -117,9 +117,9 @@ def simulate(fres):
                 l_gaso_x, l_gaso_y = line(ptx, pty, prx, pry)
                 l_gaso = [im_mesh[l_gaso_x[j]][l_gaso_y[j]] for j in range(len(l_gaso_x))]
                 build_num, init_road, last_road = func.count_building(l_gaso, const.TH_GASO)
-                build.bappend(pt, pr, build_num, init_road, last_road)
+                build.bappend(pt, pr, build_num, init_road, last_road, float(row['dist']))
 
-                rssi = (-1)*func.PL(const.FREQ, float(row['dist'])) + float(row['shad'])\
+                rssi = (-1)*func.PL(const.FREQ, float(row['dist'])) \
                     - build_num * const.ATEN_BUILD
                 l_rssi.append(rssi)
 
@@ -139,8 +139,9 @@ def simulate(fres):
             build.Normalization()
             #ar_x = np.array([build.tx_norm, build.ty_norm, build.rx_norm, build.ry_norm, \
             #    build.build_dens_norm, build.buidl_rdist_norm, build.build_tdist_norm])
-            ar_x = np.array([build.tx_norm, build.ty_norm, build.rx_norm, build.ry_norm, \
-                build.build_dens_norm])
+            #ar_x = np.array([build.tx_norm, build.ty_norm, build.rx_norm, build.ry_norm, \
+            #    build.build_dens_norm])
+            ar_x = np.array([build.build_dens_norm, build.dist_norm])
             ar_x = ar_x.T
             ar_t = np.array(l_rssi)
             ar_x = ar_x.astype('float32')

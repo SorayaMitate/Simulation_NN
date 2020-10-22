@@ -100,7 +100,7 @@ for i in range(len(l_points)):
         df = pd.concat([df, tmp_df])
 
 
-fig, ax = plt.subplots()
+fig, ax = plt.subsplots()
 
 ax = sns.boxplot(x='node', y='point', order=l_name, data=df)
 
@@ -118,3 +118,23 @@ ax.grid()
 #plt.xlabel('Expected Error [dB]',fontname="HGGothicM",fontsize=30)
 #plt.ylabel('CDF',fontname="HGGothicM",fontsize=30)
 plt.show()
+
+
+
+#print('--- proposed ---  ', col[0])
+s0, cdf0 = test(list(data['eidw']))
+iroiro(s0)
+
+#print('--- proposed ---  ', col[1])
+s1, cdf1 = test(list(data['enn']))
+iroiro(s1)
+
+#print('--- proposed ---  ', col[1])
+s2, cdf2 = test(list(data['kernel']))
+iroiro(s2)
+
+'''散布図
+'''
+plt.scatter(s0, cdf0, s=10,label='IDW')
+plt.scatter(s1, cdf1, s=10,label='NN')
+plt.scatter(s2, cdf2, s=10,label='KERNEL')
